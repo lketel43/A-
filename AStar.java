@@ -1,4 +1,6 @@
-import java.awt.*;
-import javax.swing.*;
 
-public class AStar extends JFrame{}
+public class AStar{
+
+    public static AStarFrame frame;
+    
+}
