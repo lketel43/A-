@@ -2,22 +2,30 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
 
 
-public class AEtoileFrame extends JFrame{
+public class AStarFrame extends JFrame{
 
     private static boolean hasStart = false;
-    private static boolean canSelectStartAndEnd = true;
+    private static boolean canSelectStartAndEnd = false;
     private static boolean canDraw = true;
 
-    public AEtoileFrame(int raws, int columns){
+    public AStarFrame(int raws, int columns){
         super();
         this.setSize(500, 500);
         JPanel pane = new JPanel();
         pane.setLayout(new GridLayout(raws, columns));
+        pane.addMouseMotionListener(new MouseMotionAdapter(){
+            @Override
+            public void mouseDragged(MouseEvent e){
+                System.out.println(e.getComponent());
+                e.getComponent().setBackground(Color.BLACK);
+            }
+        });
         for(int i = 0; i < raws * columns; i++){
-            AEtoilePanel p = new AEtoilePanel();
+            AStarPanel p = new AStarPanel();
             pane.add(p);
         }
         this.add(pane);
@@ -25,9 +33,9 @@ public class AEtoileFrame extends JFrame{
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    static class AEtoilePanel extends JPanel{
+    static class AStarPanel extends JPanel{
 
-        public AEtoilePanel(){
+        public AStarPanel(){
             super();
             Border b = BorderFactory.createLineBorder(Color.black, 1);
             this.setBorder(b);
@@ -46,14 +54,24 @@ public class AEtoileFrame extends JFrame{
                         }
                     }
                 }
-                
+
             });
+            /*
+            this.addMouseMotionListener(new MouseMotionAdapter(){
+                @Override
+                public void mouseDragged(MouseEvent e){
+                    if(canDraw){
+                        e.getComponent().setBackground(Color.BLACK);
+                    }
+                }
+            });
+            */
         }
     }
 
 
     public static void main(String[] args){
-        AEtoileFrame a = new AEtoileFrame(50, 50);
+        AStarFrame a = new AStarFrame(50, 50);
 
     }
 
