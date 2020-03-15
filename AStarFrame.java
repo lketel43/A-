@@ -4,30 +4,42 @@ import javax.swing.border.Border;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
 
 
 public class AStarFrame extends JFrame{
 
+    private static final long serialVersionUID = 1L;
     private static boolean hasStart = false;
     private static boolean canSelectStartAndEnd = false;
-    private static boolean canDraw = true;
+    private static boolean canDraw = false;
+    private static boolean isDrawing = false;
 
     public AStarFrame(int raws, int columns){
         super();
         this.setSize(500, 500);
-        JPanel pane = new JPanel();
-        pane.setLayout(new GridLayout(raws, columns));
-        pane.addMouseMotionListener(new MouseMotionAdapter(){
+        this.addKeyListener(new KeyAdapter(){
+
             @Override
-            public void mouseDragged(MouseEvent e){
-                System.out.println(e.getComponent());
-                e.getComponent().setBackground(Color.BLACK);
+            public void keyTyped(KeyEvent e){
+                if(e.getKeyChar() == 'd') canDraw = true;
+                if(e.getKeyChar() == 'a'){
+                    canDraw = false;
+                    canSelectStartAndEnd = true;
+                }
             }
         });
+
+        JPanel pane = new JPanel();
+        GridLayout layoutStar = new GridLayout(raws, columns);
+        layoutStar.preferredLayoutSize(pane);
+        pane.setLayout(layoutStar);
         for(int i = 0; i < raws * columns; i++){
             AStarPanel p = new AStarPanel();
             pane.add(p);
         }
+
         this.add(pane);
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -35,7 +47,9 @@ public class AStarFrame extends JFrame{
 
     static class AStarPanel extends JPanel{
 
-        public AStarPanel(){
+        private static final long serialVersionUID = 1L;
+
+        public AStarPanel() {
             super();
             Border b = BorderFactory.createLineBorder(Color.black, 1);
             this.setBorder(b);
@@ -43,6 +57,10 @@ public class AStarFrame extends JFrame{
 
                 @Override
                 public void mouseClicked(MouseEvent e){
+                    if(canDraw && !canSelectStartAndEnd){
+                        if(isDrawing) isDrawing = false;
+                        else isDrawing = true;
+                    }   
                     if(canSelectStartAndEnd){
                         if(!hasStart){
                             setBackground(Color.GREEN);
@@ -56,16 +74,16 @@ public class AStarFrame extends JFrame{
                 }
 
             });
-            /*
+
             this.addMouseMotionListener(new MouseMotionAdapter(){
+
                 @Override
-                public void mouseDragged(MouseEvent e){
-                    if(canDraw){
-                        e.getComponent().setBackground(Color.BLACK);
+                public void mouseMoved(MouseEvent e){
+                    if(isDrawing){
+                        setBackground(Color.BLACK);
                     }
                 }
             });
-            */
         }
     }
 
