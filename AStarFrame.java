@@ -11,11 +11,25 @@ import java.awt.event.KeyAdapter;
 public class AStarFrame extends JFrame{
 
     private static final long serialVersionUID = 1L;
+
+    private JPanel pane;
+
     private static boolean hasStart = false;
     private static boolean canSelectStartAndEnd = false;
     private static boolean canDraw = false;
     private static boolean isDrawing = false;
     private static boolean finishDrawing = false;
+
+    public AStarPanel coordonates(int x, int y){
+        for(Component c : this.pane.getComponents()){
+            if(c instanceof AStarPanel){
+                if(((AStarPanel)c).getXCoor() == x && ((AStarPanel)c).getYCoor() == y) {
+                    return ((AStarPanel)c);
+                }
+            }
+        }
+        return null;
+    }
 
     public AStarFrame(int raws, int columns){
         super();
@@ -32,10 +46,10 @@ public class AStarFrame extends JFrame{
             }
         });
 
-        JPanel pane = new JPanel();
+        this.pane = new JPanel();
         GridLayout layoutStar = new GridLayout(raws, columns);
         layoutStar.preferredLayoutSize(pane);
-        pane.setLayout(layoutStar);
+        this.pane.setLayout(layoutStar);
         for(int i = 0; i < raws; i++){
             for(int j = 0; j < columns; j++){
                 AStarPanel p = new AStarPanel(j, i);
@@ -121,6 +135,7 @@ public class AStarFrame extends JFrame{
 
     public static void main(String[] args){
         AStarFrame a = new AStarFrame(50, 50);
+        System.out.println(a.coordonates(25, 25));
 
     }
 
