@@ -14,6 +14,8 @@ public class AStarFrame extends JFrame{
 
     private JPanel pane;
 
+    private AStar astar;
+
     private static boolean hasStart = false;
     private static boolean canSelectStartAndEnd = false;
     private static boolean canDraw = false;

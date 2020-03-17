@@ -14,6 +14,18 @@ public class CellStar{
         return this.yCell;
     }
 
+    public CellStar getParent(){
+        return this.parent;
+    }
+
+    public int getHeuristic(){
+        return this.heuristic;
+    }
+
+    public int getFinalCost(){
+        return this.finalCost;
+    }
+
     public CellStar(int x, int y){
         this.xCell = x;
         this.yCell = y;
