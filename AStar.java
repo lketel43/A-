@@ -1,4 +1,5 @@
 import java.util.PriorityQueue;
+import java.util.Comparator;
 
 public class AStar{
 
@@ -11,11 +12,8 @@ public class AStar{
     private PriorityQueue<CellStar> openCells;
     private boolean[][] closedCells;
 
-    private int startX;
-    private int startY;
-
-    private int endX;
-    private int endY;
+    private CellStar startingCell;
+    private CellStar finalCell;
 
     public CellStar[][] getGrid(){
         return this.grid;
@@ -29,29 +27,58 @@ public class AStar{
         return this.closedCells;
     }
 
-    public int getStartX(){
-        return this.startX;
+    public CellStar getStartingCell(){
+        return this.startingCell;
     }
 
-    public int getStartY(){
-        return this.startY;
-    }
-
-    public int getEndX(){
-        return this.endX;
-    }
-
-    public int getEndY(){
-        return this.endY;
+    public CellStar getFinalCell(){
+        return this.finalCell;
     }
 
     public AStar(int width, int height){
         this.grid = new CellStar[width][height];
         this.closedCells = new boolean[width][height];
-        this.openCells = new PriorityQueue<CellStar>((CellStar c1, CellStar c2) -> {
-            if(c1.getFinalCost() < c2.getFinalCost()) return -1;
-            else if(c1.getFinalCost() > c2.getFinalCost()) return 1;
-            else return 0;
+        this.openCells = new PriorityQueue<CellStar>(new Comparator<CellStar>(){
+            @Override
+            public int compare(CellStar c1, CellStar c2){
+                if(c1.getFinalCost() < c2.getFinalCost()) return -1;
+                else if(c1.getFinalCost() > c2.getFinalCost()) return 1;
+                else return 0;
+            }
         });
+        this.setGrid();
+    }
+
+    /**
+     * @param width the width of the grid
+     * @param height the height of the grid
+     */
+    private void setGrid(){
+        for(int i = 0; i < this.grid.length; i++){
+            for(int j = 0; j < this.grid[i].length; j++){
+                CellStar c = new CellStar(i, j);
+                this.grid[i][j] = c;
+            }
+        }
+    }
+
+    public void setHeuristics(){
+        for(int i = 0; i < this.grid.length; i++){
+            for(int j = 0; j < this.grid[i].length; j++){
+                this.grid[i][j].setHeuristic(this.finalCell);
+            }
+        }
+    }
+
+    public void setStartingCell(int x, int y){
+        this.startingCell = new CellStar(x, y);
+    }
+
+    public void setFinalCell(int x, int y){
+        this.finalCell = new CellStar(x, y);
+    }
+
+    public static void main(String[] args){
+        AStar s = new AStar(50, 50);
     }
 }

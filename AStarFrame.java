@@ -16,12 +16,17 @@ public class AStarFrame extends JFrame{
 
     private AStar astar;
 
-    private static boolean hasStart = false;
-    private static boolean canSelectStartAndEnd = false;
-    private static boolean canDraw = false;
-    private static boolean isDrawing = false;
-    private static boolean finishDrawing = false;
+    private boolean hasStart = false;
+    private boolean canSelectStartAndEnd = false;
+    private boolean canDraw = false;
+    private boolean isDrawing = false;
+    private boolean finishDrawing = false;
 
+    /**
+     * @param x the raw of the panel we want to get
+     * @param y the line of the panel we want to get
+     * @return the panel which is on the raw n°x and on the line n°y
+     */
     public AStarPanel coordonates(int x, int y){
         for(Component c : this.pane.getComponents()){
             if(c instanceof AStarPanel){
@@ -40,10 +45,10 @@ public class AStarFrame extends JFrame{
 
             @Override
             public void keyTyped(KeyEvent e){
-                if(e.getKeyChar() == 'd' && !finishDrawing) canDraw = true;
-                if(e.getKeyChar() == 'a' && !finishDrawing){
+                if(e.getKeyChar() == 'd' && !AStarFrame.this.finishDrawing) canDraw = true;
+                if(e.getKeyChar() == 'a' && !AStarFrame.this.finishDrawing){
                     canDraw = false;
-                    canSelectStartAndEnd = true;
+                    AStarFrame.this.canSelectStartAndEnd = true;
                 }
             }
         });
@@ -59,20 +64,21 @@ public class AStarFrame extends JFrame{
             }
         }
 
+        this.astar = new AStar(raws, columns);
         this.add(pane);
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    static class AStarPanel extends JPanel{
+    class AStarPanel extends JPanel{
 
         private static final long serialVersionUID = 1L;
 
         private final int xCoor;
         private final int yCoor;
 
-        private boolean isStart = false;
-        private boolean isEnd = false;
+        private boolean isStartingCell = false;
+        private boolean isFinalCell = false;
         private boolean canCross = true;
     
         public int getXCoor(){
@@ -94,21 +100,24 @@ public class AStarFrame extends JFrame{
 
                 @Override
                 public void mouseClicked(MouseEvent e){
-                    if(canDraw && !canSelectStartAndEnd){
-                        if(isDrawing) isDrawing = false;
-                        else isDrawing = true;
+                    if(AStarFrame.this.canDraw && !AStarFrame.this.canSelectStartAndEnd){
+                        if(AStarFrame.this.isDrawing) isDrawing = false;
+                        else AStarFrame.this.isDrawing = true;
                     }   
-                    if(canSelectStartAndEnd){
-                        if(!hasStart){
+                    if(AStarFrame.this.canSelectStartAndEnd){
+                        if(!AStarFrame.this.hasStart){
                             e.getComponent().setBackground(Color.GREEN);
-                            ((AStarPanel)e.getComponent()).isStart = true;
+                            ((AStarPanel)e.getComponent()).isStartingCell = true;
                             hasStart = true;
+                            AStarFrame.this.astar.setStartingCell(((AStarPanel)e.getComponent()).getXCoor(), ((AStarPanel)e.getComponent()).getYCoor());
                         }
                         else{
                             e.getComponent().setBackground(Color.RED);
-                            ((AStarPanel)e.getComponent()).isEnd = true;
-                            canSelectStartAndEnd = false;
-                            finishDrawing = true;
+                            ((AStarPanel)e.getComponent()).isFinalCell = true;
+                            AStarFrame.this.canSelectStartAndEnd = false;
+                            AStarFrame.this.finishDrawing = true;
+                            AStarFrame.this.astar.setFinalCell(((AStarPanel)e.getComponent()).getXCoor(), ((AStarPanel)e.getComponent()).getYCoor());
+                            AStarFrame.this.astar.setHeuristics();
                         }
                     }
                 }
@@ -125,7 +134,7 @@ public class AStarFrame extends JFrame{
 
                 @Override
                 public void mouseMoved(MouseEvent e){
-                    if(isDrawing && canDraw){
+                    if(AStarFrame.this.isDrawing && AStarFrame.this.canDraw){
                         e.getComponent().setBackground(Color.BLACK);
                         ((AStarPanel)e.getComponent()).canCross = false;
                     }
@@ -136,9 +145,12 @@ public class AStarFrame extends JFrame{
 
 
     public static void main(String[] args){
-        AStarFrame a = new AStarFrame(50, 50);
-        System.out.println(a.coordonates(25, 25));
-
+        java.awt.EventQueue.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+                AStarFrame a = new AStarFrame(50, 50);
+            }
+        });
     }
 
 
